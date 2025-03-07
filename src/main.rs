@@ -125,7 +125,9 @@ fn draw_board(board: &HashMap<u8, String>) {
 }
 
 fn player_turn(board: &mut HashMap<u8, String>, current_player: &Player) {
+    println!("{}'s ({}) turn:", current_player.name, current_player.marker);
     let player_move = get_player_move(&board);
+
 
     place_marker(board, player_move, current_player);
 }
