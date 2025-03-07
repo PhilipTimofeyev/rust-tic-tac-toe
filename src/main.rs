@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use std::io;
+use std::io::{stdin, stdout, Read, Write};
+use clearscreen::ClearScreen;
 
 const WINNING_SQUARES: [[u8; 3]; 8] = [
     [1, 2, 3],
@@ -42,7 +43,6 @@ fn main() {
         draw_board(&board);
 
         loop {
-            clear_screen();
 
             player_turn(&mut board, &players[0]);
             draw_board(&board);
@@ -61,7 +61,6 @@ fn main() {
         let player_action = get_player_action();
         match player_action {
             Action::Replay => {
-                println!("Starting new game");
                 continue;
             }
             Action::Quit => {
@@ -73,14 +72,23 @@ fn main() {
 }
 
 fn welcome_message() {
+    clear_screen();
     println!("Welcome to Tic-Tac-Toe!");
     println!("The goal is to get three of the same marker across a row, column, or diagonally.");
     println!("First one to do so, wins!");
     println!("");
+    pause();
+}
+
+fn pause() {
+    let mut stdout = stdout();
+    stdout.write(b"Press Enter to continue...").unwrap();
+    stdout.flush().unwrap();
+    stdin().read(&mut [0]).unwrap();
 }
 
 fn clear_screen() {
-    print!("{}[2J", 27 as char);
+    ClearScreen::default().clear().expect("Failed to clear screen");
 }
 
 fn initialize_board() -> HashMap<u8, String> {
@@ -92,6 +100,8 @@ fn initialize_board() -> HashMap<u8, String> {
 }
 
 fn draw_board(board: &HashMap<u8, String>) {
+    clear_screen();
+
     let a = board.get(&1).unwrap();
     let b = board.get(&2).unwrap();
     let c = board.get(&3).unwrap();
@@ -123,7 +133,7 @@ fn get_player_move(board: &HashMap<u8, String>) -> u8 {
     loop {
         let mut square = String::new();
 
-        io::stdin()
+        stdin()
             .read_line(&mut square)
             .expect("Failed to read line");
 
@@ -190,7 +200,7 @@ fn get_player_action() -> Action {
     loop {
         let mut response = String::new();
 
-        io::stdin()
+        stdin()
             .read_line(&mut response)
             .expect("Failed to read line");
 
