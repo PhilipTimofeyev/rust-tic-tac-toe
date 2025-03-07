@@ -1,10 +1,6 @@
 use std::collections::HashMap;
 use std::io;
 
-// need to:
-// play again/reset board
-// Switch to enum
-
 const WINNING_SQUARES: [[u8; 3]; 8] = [
     [1, 2, 3],
     [4, 5, 6],
@@ -26,22 +22,24 @@ fn main() {
         let mut board = initialize_board();
         let mut current_marker = String::from("X");
         let mut turn: u8 = 0;
+        welcome_message();
+        draw_board(&board);
 
         loop {
             clear_screen();
 
-            current_marker = set_marker(current_marker);
             player_turn(&mut board, &current_marker);
             draw_board(&board);
-            turn += 1;
 
+            turn += 1;
+            
             if check_if_winner(&board, &current_marker, turn) {
-                println!("{} is the winner!", current_marker);
                 break;
-            } else if turn == 9 {
-                println!("Draw!");
+            } else if check_if_draw(turn) {                
                 break
             }
+            
+            current_marker = set_marker(current_marker);
         }
         let player_action = get_player_action();
         match player_action {
@@ -58,7 +56,7 @@ fn main() {
 }
 
 fn get_player_action() -> Action {
-    println!("Play again?");
+    println!("Play again? Enter y for yes or n for no:");
 
     loop {
         let mut response = String::new();
@@ -74,6 +72,22 @@ fn get_player_action() -> Action {
                 println!("Please enter y or n:")
             }
         }
+    }
+}
+
+fn welcome_message() {
+    println!("Welcome to Tic-Tac-Toe!");
+    println!("The goal is to get three of the same marker across a row, column, or diagonally.");
+    println!("First one to do so, wins!");
+    println!("");
+}
+
+fn check_if_draw(turn: u8) -> bool {
+    if turn == 9 {
+        println!("Draw!");
+        true
+    } else {
+        false
     }
 }
 
@@ -118,6 +132,7 @@ fn check_if_winner(board: &HashMap<u8, String>, current_marker: &String, turn: u
                 None => (),
             };
             if count == 3 {
+                println!("{} is the winner!", current_marker);
                 return true;
             }
         }
