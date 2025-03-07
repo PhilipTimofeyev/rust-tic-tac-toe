@@ -1,6 +1,10 @@
 use std::collections::HashMap;
 use std::io;
 
+// need to:
+// play again/reset board
+// Switch to enum
+
 const WINNING_SQUARES: [[u8; 3]; 8] = [
     [1, 2, 3],
     [4, 5, 6],
@@ -17,38 +21,56 @@ fn main() {
     let mut current_marker = String::from("X");
 
     loop {
-        print!("{}[2J", 27 as char);
-        let player_move = player_move(&board);
-        current_marker = alternate_marker(current_marker);
+        clear_screen();
 
-        board.insert(player_move, current_marker.to_string());
+        let player_move = player_move(&board);
+        current_marker = set_marker(current_marker);
+
+        place_marker(&mut board, player_move, &current_marker);
         draw_board(&board);
+
         if check_if_winner(&board, &current_marker) {
             println!("{} is the winner!", current_marker);
-            break;
+            board = reset_board();
+            // break;
         }
     }
+}
+
+fn clear_screen() {
+    print!("{}[2J", 27 as char);
+}
+
+fn place_marker(board: &mut HashMap<u8, String>, player_move: u8, current_marker: &String) {
+    board.insert(player_move, current_marker.to_string());
 }
 
 fn initialize_board() -> HashMap<u8, String> {
     let mut board = HashMap::new();
 
-    board.insert(1, " ".to_string());
-    board.insert(2, " ".to_string());
-    board.insert(3, " ".to_string());
-
-    board.insert(4, " ".to_string());
-    board.insert(5, " ".to_string());
-    board.insert(6, " ".to_string());
-
-    board.insert(7, " ".to_string());
-    board.insert(8, " ".to_string());
-    board.insert(9, " ".to_string());
+    for i in (1..=9) {
+        board.insert(i, i.to_string());
+    }
 
     board
 }
 
+fn reset_board() -> HashMap<u8, String> {
+    initialize_board()
+}
+
 fn check_if_winner(board: &HashMap<u8, String>, current_marker: &String) -> bool {
+    let mut number_of_markers: u8 = 9;
+    for (k, v) in board {
+        if v == " " {
+            number_of_markers -= 1
+        }
+
+        if number_of_markers < 5 {
+            return false;
+        }
+    }
+
     for row in WINNING_SQUARES {
         let mut count: u8 = 0;
 
@@ -69,7 +91,7 @@ fn check_if_winner(board: &HashMap<u8, String>, current_marker: &String) -> bool
     false
 }
 
-fn alternate_marker(marker: String) -> String {
+fn set_marker(marker: String) -> String {
     if marker == "X" {
         String::from("O")
     } else {
@@ -99,14 +121,13 @@ fn player_move(board: &HashMap<u8, String>) -> u8 {
         match board.get(&square) {
             Some(i) => {
                 if i == "X" || i == "O" {
-                    continue
+                    continue;
                 } else {
-                    return square
+                    return square;
                 }
-            },
+            }
             None => return square,
         };
-
     }
 }
 
