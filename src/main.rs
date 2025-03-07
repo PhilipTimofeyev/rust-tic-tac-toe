@@ -85,7 +85,7 @@ fn clear_screen() {
 
 fn initialize_board() -> HashMap<u8, String> {
     let mut board = HashMap::new();
-    for i in (1..=9) {
+    for i in 1..=9 {
         board.insert(i, i.to_string());
     }
     board
@@ -194,7 +194,7 @@ fn get_player_action() -> Action {
             .read_line(&mut response)
             .expect("Failed to read line");
 
-        match response.as_str().trim() {
+        match response.to_lowercase().trim() {
             "y" => return Action::Replay,
             "n" => return Action::Quit,
             _ => {
