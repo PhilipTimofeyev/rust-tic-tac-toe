@@ -18,7 +18,7 @@ fn main() {
 
     loop {
         print!("{}[2J", 27 as char);
-        let player_move = player_move();
+        let player_move = player_move(&board);
         current_marker = alternate_marker(current_marker);
 
         board.insert(player_move, current_marker.to_string());
@@ -83,7 +83,7 @@ enum Marker {
     Empty,
 }
 
-fn player_move() -> u8 {
+fn player_move(board: &HashMap<u8, String>) -> u8 {
     loop {
         let mut square = String::new();
 
@@ -96,7 +96,17 @@ fn player_move() -> u8 {
             Err(_) => continue,
         };
 
-        return square;
+        match board.get(&square) {
+            Some(i) => {
+                if i == "X" || i == "O" {
+                    continue
+                } else {
+                    return square
+                }
+            },
+            None => return square,
+        };
+
     }
 }
 
