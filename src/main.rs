@@ -16,26 +16,67 @@ const WINNING_SQUARES: [[u8; 3]; 8] = [
     [3, 5, 7],
 ];
 
+enum Action {
+    Replay,
+    Quit,
+}
+
 fn main() {
-    let mut board = initialize_board();
-    let mut current_marker = String::from("X");
-    let mut turn: u8 = 0;
-
     loop {
-        clear_screen();
+        let mut board = initialize_board();
+        let mut current_marker = String::from("X");
+        let mut turn: u8 = 0;
 
-        current_marker = set_marker(current_marker);
-        player_turn(&mut board, &current_marker);
-        draw_board(&board);
-        turn += 1;
+        loop {
+            clear_screen();
 
-        if check_if_winner(&board, &current_marker, turn) {
-            println!("{} is the winner!", current_marker);
-            board = reset_board();
-            // break;
+            current_marker = set_marker(current_marker);
+            player_turn(&mut board, &current_marker);
+            draw_board(&board);
+            turn += 1;
+
+            if check_if_winner(&board, &current_marker, turn) {
+                println!("{} is the winner!", current_marker);
+                break;
+            } else if turn == 9 {
+                println!("Draw!");
+                break
+            }
+        }
+        let player_action = get_player_action();
+        match player_action {
+            Action::Replay => {
+                println!("Starting new game");
+                continue;
+            },
+            Action::Quit => {
+                println!("Thanks for playing!");
+                break
+            },
         }
     }
 }
+
+fn get_player_action() -> Action {
+    println!("Play again?");
+
+    loop {
+        let mut response = String::new();
+
+        io::stdin()
+            .read_line(&mut response)
+            .expect("Failed to read line");
+
+        match response.as_str().trim() {
+            "y" => return Action::Replay,
+            "n" => return Action:: Quit,
+            _ => {
+                println!("Please enter y or n:")
+            }
+        }
+    }
+}
+
 
 fn clear_screen() {
     print!("{}[2J", 27 as char);
@@ -59,10 +100,6 @@ fn initialize_board() -> HashMap<u8, String> {
     }
 
     board
-}
-
-fn reset_board() -> HashMap<u8, String> {
-    initialize_board()
 }
 
 fn check_if_winner(board: &HashMap<u8, String>, current_marker: &String, turn: u8) -> bool {
