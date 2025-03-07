@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use std::io::{stdin, stdout, Read, Write};
 use clearscreen::ClearScreen;
+use std::collections::HashMap;
+use std::io::{Read, Write, stdin, stdout};
 
 const WINNING_SQUARES: [[u8; 3]; 8] = [
     [1, 2, 3],
@@ -43,7 +43,6 @@ fn main() {
         draw_board(&board);
 
         loop {
-
             player_turn(&mut board, &players[0]);
             draw_board(&board);
 
@@ -88,7 +87,9 @@ fn pause() {
 }
 
 fn clear_screen() {
-    ClearScreen::default().clear().expect("Failed to clear screen");
+    ClearScreen::default()
+        .clear()
+        .expect("Failed to clear screen");
 }
 
 fn initialize_board() -> HashMap<u8, String> {
@@ -133,18 +134,24 @@ fn get_player_move(board: &HashMap<u8, String>) -> u8 {
     loop {
         let mut square = String::new();
 
-        stdin()
-            .read_line(&mut square)
-            .expect("Failed to read line");
+        stdin().read_line(&mut square).expect("Failed to read line");
 
         let square: u8 = match square.trim().parse() {
-            Ok(num) => num,
+            Ok(num) => {
+                if num > 0 && num < 10 {
+                    num
+                } else {
+                    println!("Please enter a number between 1 and 9");
+                    continue;
+                }
+            }
             Err(_) => continue,
         };
 
         match board.get(&square) {
             Some(i) => {
                 if i == "X" || i == "O" {
+                    println!("Please select an empty square");
                     continue;
                 } else {
                     return square;
