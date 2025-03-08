@@ -13,15 +13,6 @@ const WINNING_SQUARES: [[u8; 3]; 8] = [
     [3, 5, 7],
 ];
 
-struct Player {
-    name: String,
-    marker: String,
-}
-enum Action {
-    Replay,
-    Quit,
-}
-
 fn main() {
     welcome_message();
 
@@ -43,7 +34,7 @@ fn main() {
         draw_board(&board);
 
         loop {
-            player_turn(&mut board, &players[0]);
+            players[0].player_turn(&mut board);
             draw_board(&board);
 
             turn += 1;
@@ -68,6 +59,56 @@ fn main() {
             }
         }
     }
+}
+struct Player {
+    name: String,
+    marker: String,
+}
+
+impl Player {
+    fn player_turn(&self, board: &mut HashMap<u8, String>,) {
+        println!("{}'s ({}) turn:", self.name, self.marker);
+        let player_move = self.get_player_move(&board);
+    
+    
+        place_marker(board, player_move, self);
+    }
+
+    fn get_player_move(&self, board: &HashMap<u8, String>) -> u8 {
+        loop {
+            let mut square = String::new();
+    
+            stdin().read_line(&mut square).expect("Failed to read line");
+    
+            let square: u8 = match square.trim().parse() {
+                Ok(num) => {
+                    if num > 0 && num < 10 {
+                        num
+                    } else {
+                        println!("Please enter a number between 1 and 9");
+                        continue;
+                    }
+                }
+                Err(_) => continue,
+            };
+    
+            match board.get(&square) {
+                Some(i) => {
+                    if i == "X" || i == "O" {
+                        println!("Please select an empty square");
+                        continue;
+                    } else {
+                        return square;
+                    }
+                }
+                None => return square,
+            };
+        }
+    }
+}
+enum Action {
+    Replay,
+    Quit,
 }
 
 fn welcome_message() {
@@ -122,46 +163,6 @@ fn draw_board(board: &HashMap<u8, String>) {
     println!("-------------");
     println!("| {} | {} | {} |", g, h, i);
     println!("-------------");
-}
-
-fn player_turn(board: &mut HashMap<u8, String>, current_player: &Player) {
-    println!("{}'s ({}) turn:", current_player.name, current_player.marker);
-    let player_move = get_player_move(&board);
-
-
-    place_marker(board, player_move, current_player);
-}
-
-fn get_player_move(board: &HashMap<u8, String>) -> u8 {
-    loop {
-        let mut square = String::new();
-
-        stdin().read_line(&mut square).expect("Failed to read line");
-
-        let square: u8 = match square.trim().parse() {
-            Ok(num) => {
-                if num > 0 && num < 10 {
-                    num
-                } else {
-                    println!("Please enter a number between 1 and 9");
-                    continue;
-                }
-            }
-            Err(_) => continue,
-        };
-
-        match board.get(&square) {
-            Some(i) => {
-                if i == "X" || i == "O" {
-                    println!("Please select an empty square");
-                    continue;
-                } else {
-                    return square;
-                }
-            }
-            None => return square,
-        };
-    }
 }
 
 fn place_marker(board: &mut HashMap<u8, String>, player_move: u8, current_player: &Player) {
