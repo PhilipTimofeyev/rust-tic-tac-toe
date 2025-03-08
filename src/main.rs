@@ -17,13 +17,13 @@ fn main() {
     welcome_message();
 
     loop {
-        let mut board = initialize_board();
-        let mut turn: u8 = 0;
+        let mut board = Board::new();
 
         let player1 = Player {
             name: String::from("Player 1"),
             marker: String::from("X"),
         };
+
         let player2 = Player {
             name: String::from("Player 2"),
             marker: String::from("O"),
@@ -31,17 +31,18 @@ fn main() {
 
         let mut players = [player1, player2];
 
-        draw_board(&board);
+        board.draw_board();
 
         loop {
+            println!("{}", board.turn);
             players[0].player_turn(&mut board);
-            draw_board(&board);
+            board.draw_board();
 
-            turn += 1;
+            board.add_turn();
 
-            if check_if_winner(&board, &players[0], turn) {
+            if board.check_if_winner(&players[0]) {
                 break;
-            } else if check_if_draw(turn) {
+            } else if board.check_if_draw() {
                 break;
             }
 
@@ -60,18 +61,103 @@ fn main() {
         }
     }
 }
+
+struct Board {
+    squares: HashMap<u8, String>,
+    turn: u8,
+}
+
+impl Board {
+    fn new() -> Self {
+        let mut squares = HashMap::new();
+        for i in 1..=9 {
+            squares.insert(i, i.to_string());
+        }
+        Self {
+            squares: squares,
+            turn: 0,
+        }
+    }
+
+    fn draw_board(&self) {
+        clear_screen();
+    
+        let a = self.squares.get(&1).unwrap();
+        let b = self.squares.get(&2).unwrap();
+        let c = self.squares.get(&3).unwrap();
+    
+        let d = self.squares.get(&4).unwrap();
+        let e = self.squares.get(&5).unwrap();
+        let f = self.squares.get(&6).unwrap();
+    
+        let g = self.squares.get(&7).unwrap();
+        let h = self.squares.get(&8).unwrap();
+        let i = self.squares.get(&9).unwrap();
+    
+        println!("-------------");
+        println!("| {} | {} | {} |", a, b, c);
+        println!("-------------");
+        println!("| {} | {} | {} |", d, e, f);
+        println!("-------------");
+        println!("| {} | {} | {} |", g, h, i);
+        println!("-------------");
+    }
+
+    fn place_marker(&mut self, player_move: u8, current_player: &Player) {
+        self.squares.insert(player_move, current_player.marker.to_owned());
+    }
+
+    fn add_turn(&mut self) {
+        self.turn += 1
+    }
+
+    fn check_if_winner(&self, current_player: &Player) -> bool {
+        if self.turn < 5 {
+            return false;
+        }
+    
+        for row in WINNING_SQUARES {
+            let mut count: u8 = 0;
+    
+            for square in row {
+                match self.squares.get(&square) {
+                    Some(i) => {
+                        if *i == current_player.marker {
+                            count += 1
+                        }
+                    }
+                    None => (),
+                };
+                if count == 3 {
+                    println!("{} is the winner!", current_player.name);
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    fn check_if_draw(&self) -> bool {
+        if self.turn == 9 {
+            println!("Draw!");
+            true
+        } else {
+            false
+        }
+    }
+}
 struct Player {
     name: String,
     marker: String,
 }
 
 impl Player {
-    fn player_turn(&self, board: &mut HashMap<u8, String>,) {
+    fn player_turn(&self, board: &mut Board,) {
         println!("{}'s ({}) turn:", self.name, self.marker);
-        let player_move = self.get_player_move(&board);
+        let player_move = self.get_player_move(&board.squares);
     
     
-        place_marker(board, player_move, self);
+        board.place_marker(player_move, self);
     }
 
     fn get_player_move(&self, board: &HashMap<u8, String>) -> u8 {
@@ -133,93 +219,3 @@ fn clear_screen() {
         .expect("Failed to clear screen");
 }
 
-fn initialize_board() -> HashMap<u8, String> {
-    let mut board = HashMap::new();
-    for i in 1..=9 {
-        board.insert(i, i.to_string());
-    }
-    board
-}
-
-fn draw_board(board: &HashMap<u8, String>) {
-    clear_screen();
-
-    let a = board.get(&1).unwrap();
-    let b = board.get(&2).unwrap();
-    let c = board.get(&3).unwrap();
-
-    let d = board.get(&4).unwrap();
-    let e = board.get(&5).unwrap();
-    let f = board.get(&6).unwrap();
-
-    let g = board.get(&7).unwrap();
-    let h = board.get(&8).unwrap();
-    let i = board.get(&9).unwrap();
-
-    println!("-------------");
-    println!("| {} | {} | {} |", a, b, c);
-    println!("-------------");
-    println!("| {} | {} | {} |", d, e, f);
-    println!("-------------");
-    println!("| {} | {} | {} |", g, h, i);
-    println!("-------------");
-}
-
-fn place_marker(board: &mut HashMap<u8, String>, player_move: u8, current_player: &Player) {
-    board.insert(player_move, current_player.marker.to_owned());
-}
-
-fn check_if_winner(board: &HashMap<u8, String>, current_player: &Player, turn: u8) -> bool {
-    if turn < 5 {
-        return false;
-    }
-
-    for row in WINNING_SQUARES {
-        let mut count: u8 = 0;
-
-        for square in row {
-            match board.get(&square) {
-                Some(i) => {
-                    if *i == current_player.marker {
-                        count += 1
-                    }
-                }
-                None => (),
-            };
-            if count == 3 {
-                println!("{} is the winner!", current_player.name);
-                return true;
-            }
-        }
-    }
-    false
-}
-
-fn check_if_draw(turn: u8) -> bool {
-    if turn == 9 {
-        println!("Draw!");
-        true
-    } else {
-        false
-    }
-}
-
-fn get_player_action() -> Action {
-    println!("Play again? Enter y for yes or n for no:");
-
-    loop {
-        let mut response = String::new();
-
-        stdin()
-            .read_line(&mut response)
-            .expect("Failed to read line");
-
-        match response.to_lowercase().trim() {
-            "y" => return Action::Replay,
-            "n" => return Action::Quit,
-            _ => {
-                println!("Please enter y or n:")
-            }
-        }
-    }
-}
