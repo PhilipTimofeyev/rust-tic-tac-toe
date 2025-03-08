@@ -34,7 +34,6 @@ fn main() {
         board.draw_board();
 
         loop {
-            println!("{}", board.turn);
             players[0].player_turn(&mut board);
             board.draw_board();
 
