@@ -219,3 +219,22 @@ fn clear_screen() {
         .expect("Failed to clear screen");
 }
 
+fn get_player_action() -> Action {
+    println!("Play again? Enter y for yes or n for no:");
+
+    loop {
+        let mut response = String::new();
+
+        stdin()
+            .read_line(&mut response)
+            .expect("Failed to read line");
+
+        match response.to_lowercase().trim() {
+            "y" => return Action::Replay,
+            "n" => return Action::Quit,
+            _ => {
+                println!("Please enter y or n:")
+            }
+        }
+    }
+}
