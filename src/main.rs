@@ -155,7 +155,7 @@ impl Player {
 
     fn get_player_move(&self, board: &HashMap<u8, String>) -> u8 {
         loop {
-            let mut square = String::new();
+            let mut square = String::with_capacity(1);
 
             stdin().read_line(&mut square).expect("Failed to read line");
 
@@ -216,7 +216,7 @@ fn get_player_action() -> Action {
     println!("Play again? Enter y for yes or n for no:");
 
     loop {
-        let mut response = String::new();
+        let mut response = String::with_capacity(1);
 
         stdin()
             .read_line(&mut response)
