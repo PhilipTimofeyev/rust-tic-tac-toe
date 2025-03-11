@@ -1,5 +1,5 @@
 mod board;
-mod player;
+pub mod player;
 
 pub struct Config {
     pub board: board::Board,

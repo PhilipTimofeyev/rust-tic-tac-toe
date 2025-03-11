@@ -2,14 +2,15 @@ use std::io::stdin;
 mod config;
 mod misc;
 
+use crate::config::player::Player;
+
 pub fn play() {
     welcome_message();
 
-    let config = config::Config::build();
-    let mut board = config.board;
-    let mut players = config.players;
-
     loop {
+        let config = config::Config::build();
+        let mut board = config.board;
+        let mut players = config.players;
         board.draw_board();
 
         loop {
@@ -30,7 +31,7 @@ pub fn play() {
                 break;
             }
 
-            players.reverse();
+            alternate_player(&mut players)
         }
 
         let player_action = get_player_action();
@@ -58,6 +59,10 @@ fn welcome_message() {
     println!("First one to do so, wins!");
     println!();
     misc::pause();
+}
+
+fn alternate_player(players: &mut [Player; 2]) {
+    players.reverse()
 }
 
 fn get_player_action() -> Action {
