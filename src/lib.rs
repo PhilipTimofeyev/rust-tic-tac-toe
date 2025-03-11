@@ -84,3 +84,22 @@ fn get_player_action() -> Action {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn verify_alternate_player() {
+        let config = config::Config::build();
+        let player1_name = config.players[0].name.clone();
+        let player2_name = config.players[1].name.clone();
+        let mut players = config.players;
+
+        assert_eq!(players[0].name, player1_name);
+
+        alternate_player(&mut players);
+
+        assert_eq!(players[0].name, player2_name);
+    }
+}

@@ -15,7 +15,7 @@ impl Player {
         board.place_marker(player_move, self);
     }
 
-    pub fn get_player_move(&self, board: &HashMap<u8, String>) -> u8 {
+    fn get_player_move(&self, board: &HashMap<u8, String>) -> u8 {
         loop {
             let mut square = String::with_capacity(1);
 

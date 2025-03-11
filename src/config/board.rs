@@ -89,7 +89,6 @@ impl Board {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -115,15 +114,21 @@ mod tests {
     #[test]
     fn placing_marker() {
         let mut board = Board::new();
-        let player_1 = Player{name: String::from("Player 1"), marker: String::from("X")};
-        let player_2 = Player{name: String::from("Player 2"), marker: String::from("O")};
+        let player_1 = Player {
+            name: String::from("Player 1"),
+            marker: String::from("X"),
+        };
+        let player_2 = Player {
+            name: String::from("Player 2"),
+            marker: String::from("O"),
+        };
 
         board.place_marker(1, &player_1);
         assert_eq!(board.squares.get(&1).unwrap(), "X");
-        
+
         board.place_marker(9, &player_2);
         assert_eq!(board.squares.get(&9).unwrap(), "O");
-        
+
         board.place_marker(12, &player_1); //Returns None if square outside hash range
         assert_eq!(board.squares.get(&12), None);
     }
@@ -134,7 +139,7 @@ mod tests {
 
         board.turn = 8;
         assert!(!board.check_if_draw());
-        
+
         board.turn = 9;
         assert!(board.check_if_draw());
     }
@@ -142,9 +147,12 @@ mod tests {
     #[test]
     fn verify_row_winning_squares() {
         let mut board = Board::new();
-        let player_1 = Player{name: String::from("Player 1"), marker: String::from("X")};
+        let player_1 = Player {
+            name: String::from("Player 1"),
+            marker: String::from("X"),
+        };
         board.turn = 5; // Prevent automatic false from too few turns
-        
+
         let mut result = board.check_if_winner(&player_1);
         assert!(!result);
 
@@ -162,8 +170,11 @@ mod tests {
     #[test]
     fn verify_column_winning_squares() {
         let mut board = Board::new();
-        let player_1 = Player{name: String::from("Player 1"), marker: String::from("X")};
-        board.turn = 5; // Prevent automatic false from too few turns
+        let player_1 = Player {
+            name: String::from("Player 1"),
+            marker: String::from("X"),
+        };
+        board.turn = 5;
 
         // Check column
         board.squares.insert(1, "X".to_string());
@@ -179,8 +190,11 @@ mod tests {
     #[test]
     fn verify_diagonal_winning_squares() {
         let mut board = Board::new();
-        let player_1 = Player{name: String::from("Player 1"), marker: String::from("X")};
-        board.turn = 5; // Prevent automatic false from too few turns
+        let player_1 = Player {
+            name: String::from("Player 1"),
+            marker: String::from("X"),
+        };
+        board.turn = 5;
 
         // Check diagonal
         board.squares.insert(1, "X".to_string());
@@ -192,5 +206,4 @@ mod tests {
         println!("{:#?}", board.squares);
         assert!(result)
     }
-
 }
