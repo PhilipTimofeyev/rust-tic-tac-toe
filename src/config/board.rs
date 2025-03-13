@@ -4,12 +4,15 @@ use crate::config::player::Player;
 use crate::misc::clear_screen;
 
 const WINNING_SQUARES: [[u8; 3]; 8] = [
+    // Rows
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9],
+    // Columns
     [1, 4, 7],
     [2, 5, 8],
     [3, 6, 9],
+    // Diagonals
     [1, 5, 9],
     [3, 5, 7],
 ];
@@ -31,17 +34,17 @@ impl Board {
     pub fn draw_board(&self) {
         clear_screen();
 
-        let a = self.squares.get(&1).unwrap();
-        let b = self.squares.get(&2).unwrap();
-        let c = self.squares.get(&3).unwrap();
+        let a = self.squares.get(&1).unwrap().as_str();
+        let b = self.squares.get(&2).unwrap().as_str();
+        let c = self.squares.get(&2).unwrap().as_str();
 
-        let d = self.squares.get(&4).unwrap();
-        let e = self.squares.get(&5).unwrap();
-        let f = self.squares.get(&6).unwrap();
+        let d = self.squares.get(&4).unwrap().as_str();
+        let e = self.squares.get(&5).unwrap().as_str();
+        let f = self.squares.get(&6).unwrap().as_str();
 
-        let g = self.squares.get(&7).unwrap();
-        let h = self.squares.get(&8).unwrap();
-        let i = self.squares.get(&9).unwrap();
+        let g = self.squares.get(&7).unwrap().as_str();
+        let h = self.squares.get(&8).unwrap().as_str();
+        let i = self.squares.get(&9).unwrap().as_str();
 
         println!("-------------");
         println!("| {} | {} | {} |", a, b, c);
@@ -50,6 +53,7 @@ impl Board {
         println!("-------------");
         println!("| {} | {} | {} |", g, h, i);
         println!("-------------");
+        println!();
     }
 
     pub fn place_marker(&mut self, player_move: u8, current_player: &Player) {

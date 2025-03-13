@@ -2,6 +2,7 @@ use crate::config::board::Board;
 use std::collections::HashMap;
 use std::io::stdin;
 
+#[derive(PartialEq, Debug, Clone)]
 pub struct Player {
     pub name: String,
     pub marker: String,

@@ -54,9 +54,10 @@ enum Action {
 
 fn welcome_message() {
     misc::clear_screen();
-    println!("Welcome to Tic-Tac-Toe!");
-    println!("The goal is to get three of the same marker across a row, column, or diagonally.");
-    println!("First one to do so, wins!");
+    let message = "Welcome to Tic-Tac-Toe! \n\
+    The goal is to get three of the same marker across a row, column, or diagonally. \n\
+    First one to do so, wins!";
+    println!("{}", message);
     println!();
     misc::pause();
 }
@@ -92,14 +93,14 @@ mod tests {
     #[test]
     fn verify_alternate_player() {
         let config = config::Config::build();
-        let player1_name = config.players[0].name.clone();
-        let player2_name = config.players[1].name.clone();
+        let player_1 = config.players[0].clone();
+        let player_2 = config.players[1].clone();
         let mut players = config.players;
 
-        assert_eq!(players[0].name, player1_name);
+        assert_eq!(players[0], player_1);
 
         alternate_player(&mut players);
 
-        assert_eq!(players[0].name, player2_name);
+        assert_eq!(players[0], player_2);
     }
 }
